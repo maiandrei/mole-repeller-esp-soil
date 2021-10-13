@@ -1,4 +1,4 @@
-# mole-repeller-espadded
+# mole-repeller-esp-soil
 Contains:
  - Original mole repeller 
  - esp8266 
