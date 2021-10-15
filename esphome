@@ -46,24 +46,104 @@ i2c:
   scan: true
   id: bus_a
   
- sensor:
+sensor:
+#Solar Panel 50x50mm, rated voltage 4.5V
   - platform: adc
-    pin: A4
-    attenuation: 11db
-    name: "WP_before_check_valve"
-    update_interval: 10s
-    unit_of_measurement: "bar"
+    pin: GPIO36
+    attenuation: 6db
+    name: "Mole1 Solar"
+    update_interval: 1s
+    unit_of_measurement: "V"
     icon: "mdi:gauge"
     accuracy_decimals: 2
     filters:
-      - offset: -0.48
-      - lambda: return x*2.31;    
+    - sliding_window_moving_average:
+        window_size: 15
+        send_every: 10
+        send_first_at: 3
+    - lambda: return 4.41*(x*1.484+0.12);      #diviz*(x*panta+eroare)
+#Acumulator 18650, 3400mAh, max 4.2V, min 3.2V
+  - platform: adc
+    pin: GPIO39
+    attenuation: 6db
+    name: "Mole1 Battery"
+    update_interval: 1s
+    unit_of_measurement: "V"
+    icon: "mdi:gauge"
+    accuracy_decimals: 2
+    filters:
+    - sliding_window_moving_average:
+        window_size: 15
+        send_every: 10
+        send_first_at: 3
+    - lambda: return 4.41*(x*1.484+0.12);      #diviz*(x*panta+eroare)    
+#Capacitive Soil Moisture Sensor 1
+  - platform: adc
+    pin: GPIO34
+    attenuation: 11db
+    name: "Mole1 Soil Sensor 1"
+    update_interval: 1s
+    unit_of_measurement: "%"
+    icon: "mdi:gauge"
+    accuracy_decimals: 0
+    filters:
+    - sliding_window_moving_average:
+        window_size: 15
+        send_every: 10
+        send_first_at: 3
+   - calibrate_linear:
+      - 0.0 -> 0.0
+      - 100.0 -> 100.0
+#Capacitive Soil Moisture Sensor 2
+  - platform: adc
+    pin: GPIO34
+    attenuation: 11db
+    name: "Mole1 Soil Sensor 1"
+    update_interval: 1s
+    unit_of_measurement: "%"
+    icon: "mdi:gauge"
+    accuracy_decimals: 0
+    filters:
+    - sliding_window_moving_average:
+        window_size: 15
+        send_every: 10
+        send_first_at: 3
+   - calibrate_linear:
+      - 0.0 -> 0.0
+      - 100.0 -> 100.0
+#Senzor I2C Temp + Umiditate AHT21
+  - platform: aht10
+    temperature:
+      accuracy_decimals: 2
+      name: "Mole1 Temperature"
+      filters:
+      - sliding_window_moving_average:
+         window_size: 15
+         send_every: 10
+    humidity:
+      accuracy_decimals: 1
+      name: "Mole1 Humidity"
+      filters:
+      - sliding_window_moving_average:
+         window_size: 15
+         send_every: 10
+    update_interval: 6s
   
-  
-  
- 
- 
- 
+ESP32-1-GPIO36 ADC 2.5dB:
+
+Report -> Real
+0.675 -> 1.593
+0.400 -> 1.000
+0.289 -> 0.749  
+0.170 -> 0.500 
+0.163 -> 0.485
+0.141 -> 0.426
+0.077 -> 0.290
+0.022 -> 0.166
+0.012 -> 0.137
+0.007 -> 0.126
+0.000 -> 0.108
+0.000 -> 0.078
  TO DELETE:
   
     
