@@ -1,0 +1,93 @@
+esphome:
+  name: esp32-mole-repeller-1
+  platform: ESP32
+  board: esp32dev
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: "yourpass"
+
+wifi:
+  ssid: "yourSSID"
+  password: "yourPASS"
+  # Use this line when you need to change the fixed IP
+  # use_address: your old address
+
+# MAC pentru LoLin32 Lite - placa dev - yourMAC
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Mole-Repeller Fallback Hotspot"
+    password: "yourpass"
+    
+  manual_ip:
+    # Set this to the IP of the ESP
+    static_ip: yourIP
+    # Set this to the IP address of the router. Often ends with .1
+    gateway: yourGateway
+    # The subnet of the network. 255.255.255.0 works for most home networks.
+    subnet: yourSubnet       
+
+captive_portal:
+
+status_led:
+  pin:
+    number: GPIO22
+    inverted: false
+
+i2c:
+  sda: GPIO23
+  scl: GPIO19
+  scan: true
+  id: bus_a
+  
+ sensor:
+  - platform: adc
+    pin: A4
+    attenuation: 11db
+    name: "WP_before_check_valve"
+    update_interval: 10s
+    unit_of_measurement: "bar"
+    icon: "mdi:gauge"
+    accuracy_decimals: 2
+    filters:
+      - offset: -0.48
+      - lambda: return x*2.31;    
+  
+  
+  
+ 
+ 
+ 
+ TO DELETE:
+  
+    
+ads1115:
+  - address: 0x48
+  
+sensor:
+  - platform: ads1115
+    multiplexer: 'A0_GND'
+    gain: 6.144
+    name: "Mole1 Senz1"  
+    update_interval: 5s
+  - platform: ads1115
+    multiplexer: 'A1_GND'
+    gain: 6.144
+    name: "Mole1 Battery"  
+    update_interval: 5s
+  - platform: ads1115
+    multiplexer: 'A2_GND'
+    gain: 6.144
+    name: "Mole1 Bulit"  
+    update_interval: 5s
+  - platform: ads1115
+    multiplexer: 'A3_GND'
+    gain: 6.144
+    name: "Mole1 Solar"  
+    update_interval: 5s
