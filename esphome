@@ -45,7 +45,7 @@ i2c:
   scl: GPIO19
   scan: true
   id: bus_a
-  
+
 sensor:
 #Solar Panel 50x50mm, rated voltage 4.5V
   - platform: adc
@@ -62,6 +62,7 @@ sensor:
         send_every: 10
         send_first_at: 3
     - lambda: return 4.41*(x*1.484+0.12);      #diviz*(x*panta+eroare)
+    
 #Acumulator 18650, 3400mAh, max 4.2V, min 3.2V
   - platform: adc
     pin: GPIO39
@@ -77,6 +78,7 @@ sensor:
         send_every: 10
         send_first_at: 3
     - lambda: return 4.41*(x*1.484+0.12);      #diviz*(x*panta+eroare)    
+    
 #Capacitive Soil Moisture Sensor 1
   - platform: adc
     pin: GPIO34
@@ -85,32 +87,33 @@ sensor:
     update_interval: 1s
     unit_of_measurement: "%"
     icon: "mdi:gauge"
-    accuracy_decimals: 0
+    accuracy_decimals: 1
     filters:
-    - sliding_window_moving_average:
-        window_size: 15
-        send_every: 10
-        send_first_at: 3
-   - calibrate_linear:
-      - 0.0 -> 0.0
-      - 100.0 -> 100.0
+    - calibrate_linear:
+        # Map 0.0 (from sensor) to 0.0 (true value)
+        #- 0.0 -> 0.0
+        #- 10.0 -> 10.0
+        - 3.20 -> 0 
+        - 2.00 -> 100    
+  
+    
 #Capacitive Soil Moisture Sensor 2
   - platform: adc
-    pin: GPIO34
+    pin: GPIO35
     attenuation: 11db
-    name: "Mole1 Soil Sensor 1"
+    name: "Mole1 Soil Sensor 2"
     update_interval: 1s
     unit_of_measurement: "%"
     icon: "mdi:gauge"
-    accuracy_decimals: 0
+    accuracy_decimals: 1
     filters:
-    - sliding_window_moving_average:
-        window_size: 15
-        send_every: 10
-        send_first_at: 3
-   - calibrate_linear:
-      - 0.0 -> 0.0
-      - 100.0 -> 100.0
+    - calibrate_linear:
+        # Map 0.0 (from sensor) to 0.0 (true value)
+        #- 0.0 -> 0.0
+        #- 10.0 -> 10.0
+        - 3.05 -> 0 
+        - 1.80 -> 100   
+
 #Senzor I2C Temp + Umiditate AHT21
   - platform: aht10
     temperature:
@@ -128,46 +131,23 @@ sensor:
          window_size: 15
          send_every: 10
     update_interval: 6s
-  
-ESP32-1-GPIO36 ADC 2.5dB:
-
-Report -> Real
-0.675 -> 1.593
-0.400 -> 1.000
-0.289 -> 0.749  
-0.170 -> 0.500 
-0.163 -> 0.485
-0.141 -> 0.426
-0.077 -> 0.290
-0.022 -> 0.166
-0.012 -> 0.137
-0.007 -> 0.126
-0.000 -> 0.108
-0.000 -> 0.078
- TO DELETE:
-  
     
-ads1115:
-  - address: 0x48
-  
-sensor:
-  - platform: ads1115
-    multiplexer: 'A0_GND'
-    gain: 6.144
-    name: "Mole1 Senz1"  
-    update_interval: 5s
-  - platform: ads1115
-    multiplexer: 'A1_GND'
-    gain: 6.144
-    name: "Mole1 Battery"  
-    update_interval: 5s
-  - platform: ads1115
-    multiplexer: 'A2_GND'
-    gain: 6.144
-    name: "Mole1 Bulit"  
-    update_interval: 5s
-  - platform: ads1115
-    multiplexer: 'A3_GND'
-    gain: 6.144
-    name: "Mole1 Solar"  
-    update_interval: 5s
+switch:
+# Alimentare Soil1
+  - platform: gpio
+    pin: GPIO18
+    name: "Mole1 Soil1 Power"
+    restore_mode: "ALWAYS_ON"
+
+# Alimentare Soil2
+  - platform: gpio
+    pin: GPIO5
+    name: "Mole1 Soil2 Power"
+    restore_mode: "ALWAYS_ON"
+
+# Alimentare AHT21
+  - platform: gpio
+    pin: GPIO17
+    name: "Mole1 AHT21 Power"
+    restore_mode: "ALWAYS_ON"
+
